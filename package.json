@@ -17,6 +17,9 @@
   },
   "repository": {},
   "engines": {
-  	"node": "0.12.x"  	
+    "node": "0.12.x"
+  },
+  "devDependencies": {
+    "bower": "^1.7.1"
   }
 }
