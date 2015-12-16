@@ -6,7 +6,7 @@ var express = require('express'), routes = require('./routes'), user = require('
 
 var app = express();
 
-var db;
+var db, nlc;
 
 var cloudant;
 
@@ -16,7 +16,7 @@ var dbCredentials = {
 	dbName : 'my_sample_db'
 };
 
-var classifierId = '3AE103x13-nlc-2173';
+var classifierId = 'A3DA1Dx15-nlc-167';
 
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -27,9 +27,6 @@ var watson = require('watson-developer-cloud');
 
 var multipartMiddleware = multipart();
 var textParser = bodyParser.text();
-var nlc = watson.natural_language_classifier({
-    version: 'v1'
-});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -86,11 +83,44 @@ function initDBConnection() {
 	}
 }
 
+function initNlcConnection() {
+    var nlcCredentials = {};
+
+    if(process.env.VCAP_SERVICES) {
+        var vcapServices = JSON.parse(process.env.VCAP_SERVICES);
+        if(vcapServices.natural_language_classifier) {
+            nlcCredentials.url = vcapServices.natural_language_classifier[0].credentials.url;
+            nlcCredentials.username = vcapServices.natural_language_classifier[0].credentials.username;
+            nlcCredentials.password = vcapServices.natural_language_classifier[0].credentials.password;
+            nlcCredentials.version = process.env.NLC_VERSION || 'v1';
+
+            nlc = watson.natural_language_classifier(nlcCredentials);
+        } else {
+            console.warn('Could not find NLC credentials in VCAP_SERVICES environment variable');
+        }
+    } else {
+        console.warn('VCAP_SERVICES environment variable is not available');
+    }
+}
+
 //initDBConnection();
+initNlcConnection();
 
-app.get('/', routes.index);
+//app.get('/', routes.index);
+app.use('/bower_components', express.static('bower_components'));
+app.use(express.static('public'));
+//app.set('appPath', __dirname);
 
-app.post('/api/yule-logs', textParser, function handleYuleLogsPost (req, res) {
+app.get('/api/yule-logs', function handleGetYuleLogs (req, res) {
+    // TODO show history based on social login
+    var date = new Date();
+    var quote = '"403 Forbidden" (Scrooge, ';
+    quote = quote + date.getFullYear() + ')';
+
+    res.status(403).type('text/plain').send(quote);
+});
+
+app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
 	if (!req.body) {
         return res.sendStatus(400);
     }
