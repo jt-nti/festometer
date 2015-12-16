@@ -9,7 +9,7 @@
                 $http({
                     method : 'POST',
                     headers: {'Content-Type': 'text/plain'},
-                    url : '/api/yuleLogs',
+                    url : 'http://festometer.mybluemix.net/api/yule-logs/',
                     data : requestText
                 }).then(function success (response) {
                     $scope.yuleLogs.unshift(response)
