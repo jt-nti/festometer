@@ -100,13 +100,24 @@ app.post('/api/yule-logs', textParser, function handleYuleLogsPost (req, res) {
             text: req.body,
             classifier_id: classifierId
         },
-        function(err, response) {
+        function(err, nlcResponse) {
             if (err) {
                 console.log('error:', err);
                 res.sendStatus(500);
             } else {
-                console.log(JSON.stringify(response, null, 2));
-                res.json(response);
+                console.log(JSON.stringify(nlcResponse, null, 2));
+
+                var quote = '"' + nlcResponse.text + '" (';
+                if (nlcResponse === 'cratchit') {
+                    quote = quote + 'Cratchit, ';
+                } else {
+                    quote = quote + 'Scrooge, ';
+                }
+
+                var date = new Date();
+                quote = quote + date.getFullYear() + ')';
+
+                res.send(quote).type('text/plain');
             }
 
         }
