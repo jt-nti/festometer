@@ -16,7 +16,7 @@ var dbCredentials = {
 	dbName : 'my_sample_db'
 };
 
-var classifierId = 'A3DA1Dx15-nlc-167';
+var classifierId = process.env.NLC_ID;
 
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
