@@ -1,7 +1,16 @@
 (function () {
     'use strict'
 
-    function FestiveController ($scope, $http) {
+    function FestiveController ($scope, $http, $interval) {
+        $interval(function cheerLightsMonitor () {
+            $http({
+                method : 'GET',
+                url : 'http://api.thingspeak.com/channels/1417/field/2/last.json'
+            }).then(function success (response) {
+                $scope.treeStyle = { color: response.data.field2 };
+            });
+        }, 10 * 1000);
+
         $scope.detectScrooge = function detectScrooge () {
             var requestText = $scope.festiveText;
 
@@ -22,11 +31,13 @@
         };
 
         $scope.yuleLogs = [ ];
+
+        $scope.treeStyle = { color: '#008000' };
     }
 
     angular
         .module('app', [])
-        .controller('FestiveController', FestiveController);
+        .controller('FestiveController', ['$scope', '$http', '$interval', FestiveController]);
 
 })();
 

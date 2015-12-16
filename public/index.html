@@ -21,22 +21,29 @@
     <div class="container" ng-controller="FestiveController">
       <h1>Welcome to the fest-o-meter!</h1>
 
-      <form role="form">
+      <p>This is just an experiment to see how easy it is to train a Watson
+        <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>
+        to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme festivity should
+        help Watson improve!
+      </p>
+
+      <form role="form" ng-submit="detectScrooge()">
         <div class = "input-group">
-          <span class="input-group-addon">
+          <span class="input-group-addon" ng-style="treeStyle">
             <span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span>
           </span>
-          <input type="text" class="form-control" ng-model="festiveText">
+          <input type="text" class="form-control" ng-model="festiveText" placeholder="I love mince pies!">
           <span class = "input-group-btn">
-            <button class="btn btn-default" type="button" ng-click="detectScrooge()">Am I Scrooge?</button>
+            <button class="btn btn-default" type="submit" id="submit">Am I Scrooge?</button>
           </span>
         </div>
       </form>
 
       <ul class="list-group">
         <li ng-repeat="yuleLog in yuleLogs" class="list-group-item">{{yuleLog}}</li>
-        <li class="list-group-item">"Happy Christmas Watson" (<a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>)</li>
       </ul>
+
+      <p>Thanks to <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://cheerlights.com/">Cheerlights</a> for the decorative tree!</p>
     </div>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
