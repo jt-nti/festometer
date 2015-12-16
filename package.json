@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "node_modules/.bin/bower install"
+    "postinstall": "bower install"
   },
   "dependencies": {
     "body-parser": "1.13.2",
