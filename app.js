@@ -27,7 +27,9 @@ var watson = require('watson-developer-cloud');
 
 var multipartMiddleware = multipart();
 var textParser = bodyParser.text();
-var nlc = watson.natural_language_classifier();
+var nlc = watson.natural_language_classifier({
+    version: 'v1'
+});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
