@@ -21,12 +21,9 @@
     <div class="container" ng-controller="FestiveController">
       <h1>Welcome to the fest-o-meter!</h1>
 
-      <p>This is just an experiment to see how easy it is to train a Watson
-        <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>
-        to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme festivity should
-        help Watson improve!
-      </p>
-
+      <p class="lead">Find out whether the fest-o-meter thinks you love Christmas as much as Bob Cratchit,
+        or whether you'll be sharing humbugs with Ebenezer Scrooge.</p>
+      
       <form role="form" ng-submit="detectScrooge()">
         <div class = "input-group">
           <span class="input-group-addon" ng-style="treeStyle">
@@ -43,7 +40,12 @@
         <li ng-repeat="yuleLog in yuleLogs" class="list-group-item">{{yuleLog}}</li>
       </ul>
 
-      <p>Thanks to <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://cheerlights.com/">Cheerlights</a> for the decorative tree!</p>
+      <p>This is just an experiment to see how easy it is to train a Watson
+        <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>
+        to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme
+        festivity should help Watson improve!</p>
+
+      <p><small>Thanks to <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://cheerlights.com/">Cheerlights</a> for the decorative tree!</small></p>
     </div>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
