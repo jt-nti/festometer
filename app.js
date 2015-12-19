@@ -20,6 +20,7 @@ var dbCredentials = {
 
 var classifierId = process.env.NLC_ID;
 
+var async = require('async');
 var moment = require('moment');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -123,56 +124,117 @@ app.get('/api/yule-logs', function handleGetYuleLogs (req, res) {
     res.status(403).type('text/plain').send(quote);
 });
 
+function classifyText(text, finalCallback) {
+    async.waterfall([
+        function doClassify(callback){
+            nlc.classify(
+                {
+                    text: text,
+                    classifier_id: classifierId
+                }, function(err, nlcResponse) {
+                    callback(err, nlcResponse);
+                });
+        },
+        function processNlcResponse(nlcResponse, callback){
+            // add a timestamp
+            var now = moment().utc();
+            nlcResponse.created_at = now.format();
+
+            // add the fest-o-meter quote
+            var quote = '"' + nlcResponse.text + '" (';
+            quote = quote + nlcResponse.top_class.charAt(0).toUpperCase();
+            quote = quote + nlcResponse.top_class.slice(1).toLowerCase();
+            quote = quote + ', ' + now.year() + ')';
+            nlcResponse.quote = quote;
+
+            console.log(JSON.stringify(nlcResponse, null, 2));
+
+            callback(null, nlcResponse);
+        },
+        function storeResponse(festiveResponse, callback){
+            var id = '';
+            db.insert(festiveResponse, id, function(err, doc) {
+                console.log(JSON.stringify(doc, null, 2));
+                callback(err, festiveResponse, doc);
+            });
+        },
+        function processCloudantResponse(festiveResponse, doc, callback){
+            // add doc id
+            festiveResponse.id = doc.id;
+
+            callback(null, festiveResponse);
+        }
+    ], function (err, result) {
+        finalCallback(err, result);
+    });
+}
+
 app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
 	if (!req.body) {
         return res.sendStatus(400);
     }
 
-    nlc.classify(
-        {
-            text: req.body,
-            classifier_id: classifierId
-        },
-        function(err, nlcResponse) {
-            if (err) {
-                console.log('error:', err);
-                res.sendStatus(500);
-            } else {
-                console.log(JSON.stringify(nlcResponse, null, 2));
-
-                // store result in cloudant
-                // TODO tidy this up!
-                var now = moment().utc();
-                nlcResponse.created_at = now.format();
-                var id = '';
-                db.insert(nlcResponse, id, function(err, doc) {
-                    if(err) {
-                        console.log(err);
-                        //response.sendStatus(500);
-                    } else {
-                        console.log(JSON.stringify(doc, null, 2));
-                        //response.sendStatus(200);
-                    }
-                    //response.end();
-                });
-
-
-                var quote = '"' + nlcResponse.text + '" (';
-                if (nlcResponse.top_class === 'cratchit') {
-                    quote = quote + 'Cratchit, ';
-                } else {
-                    quote = quote + 'Scrooge, ';
-                }
-
-                var date = new Date();
-                quote = quote + date.getFullYear() + ')';
-
-                res.type('text/plain').send(quote);
-            }
-
+    classifyText(req.body, function(err, result) {
+        if (err) {
+            console.log('error:', err);
+            res.sendStatus(500);
+        } else {
+            //res.type('text/plain').send(result.quote);
+            res.json(result);
         }
-    );
+    });
 });
+
+//app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
+//    if (!req.body) {
+//        return res.sendStatus(400);
+//    }
+//
+//    nlc.classify(
+//        {
+//            text: req.body,
+//            classifier_id: classifierId
+//        },
+//        function(err, nlcResponse) {
+//            if (err) {
+//                console.log('error:', err);
+//                res.sendStatus(500);
+//            } else {
+//                console.log(JSON.stringify(nlcResponse, null, 2));
+//
+//                // store result in cloudant
+//                // TODO tidy this up!
+//                var now = moment().utc();
+//                nlcResponse.created_at = now.format();
+//                var id = '';
+//                db.insert(nlcResponse, id, function(err, doc) {
+//                    if(err) {
+//                        console.log(err);
+//                        //response.sendStatus(500);
+//                    } else {
+//                        console.log(JSON.stringify(doc, null, 2));
+//                        //response.sendStatus(200);
+//                    }
+//                    //response.end();
+//                });
+//
+//
+//                var quote = '"' + nlcResponse.text + '" (';
+//                if (nlcResponse.top_class === 'cratchit') {
+//                    quote = quote + 'Cratchit, ';
+//                } else {
+//                    quote = quote + 'Scrooge, ';
+//                }
+//
+//                var date = new Date();
+//                quote = quote + date.getFullYear() + ')';
+//
+//                res.type('text/plain').send(quote);
+//            }
+//
+//        }
+//    );
+//});
 
 //function createResponseData(id, name, value, attachments) {
 //

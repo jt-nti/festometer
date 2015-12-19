@@ -21,7 +21,7 @@
                     url : 'http://festometer.mybluemix.net/api/yule-logs/',
                     data : requestText
                 }).then(function success (response) {
-                    $scope.yuleLogs.unshift(response.data)
+                    $scope.yuleLogs.unshift(response.data.quote)
                 }, function fail (error) {
                     $scope.yuleLogs.unshift('"' + requestText + '" (Unknown)');
                     console.log(error)
