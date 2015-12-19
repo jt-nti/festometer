@@ -2,6 +2,8 @@
  * Module dependencies.
  */
 
+require('dotenv').load();
+
 var express = require('express'), routes = require('./routes'), user = require('./routes/user'), http = require('http'), path = require('path'), fs = require('fs');
 
 var app = express();
@@ -13,11 +15,12 @@ var cloudant;
 var fileToUpload;
 
 var dbCredentials = {
-	dbName : 'my_sample_db'
+	dbName : 'festometer_db'
 };
 
 var classifierId = process.env.NLC_ID;
 
+var moment = require('moment');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var logger = require('morgan');
@@ -103,7 +106,7 @@ function initNlcConnection() {
     }
 }
 
-//initDBConnection();
+initDBConnection();
 initNlcConnection();
 
 //app.get('/', routes.index);
@@ -136,6 +139,23 @@ app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
                 res.sendStatus(500);
             } else {
                 console.log(JSON.stringify(nlcResponse, null, 2));
+
+                // store result in cloudant
+                // TODO tidy this up!
+                var now = moment().utc();
+                nlcResponse.created_at = now.format();
+                var id = '';
+                db.insert(nlcResponse, id, function(err, doc) {
+                    if(err) {
+                        console.log(err);
+                        //response.sendStatus(500);
+                    } else {
+                        console.log(JSON.stringify(doc, null, 2));
+                        //response.sendStatus(200);
+                    }
+                    //response.end();
+                });
+
 
                 var quote = '"' + nlcResponse.text + '" (';
                 if (nlcResponse.top_class === 'cratchit') {
