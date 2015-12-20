@@ -174,7 +174,7 @@ app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
         return res.sendStatus(400);
     }
 
-    classifyText(req.body, function(err, result) {
+    classifyText(req.body, function handleClssificationResult (err, result) {
         if (err) {
             console.log('error:', err);
             res.sendStatus(500);
@@ -183,6 +183,62 @@ app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
             res.json(result);
         }
     });
+});
+
+function updateClassification(id, expectedClass, finalCallback) {
+    async.waterfall([
+        function retreiveDoc(callback){
+            db.get(id, callback)
+        },
+        function updateDoc(getBody, getHeader, callback){
+            getBody.expected_class = expectedClass;
+
+            var now = moment().utc();
+            getBody.updated_at = now.format();
+
+            callback(null, getBody)
+        },
+        function storeUpdatedDoc(doc, callback){
+            db.insert(doc, callback)
+        },
+        function prepareResponse(insertBody, insertHeader, callback) {
+            var result = {};
+            result.id = id;
+            result.expected_class = expectedClass;
+
+            callback(null, result);
+        }
+    ], function (err, result) {
+        finalCallback(err, result);
+    });
+}
+
+app.put('/api/yule-logs/:id', textParser, function handlePutYuleLogs (req, res) {
+    if (!req.body) {
+        return res.sendStatus(400);
+    }
+
+    var idParam = req.params.id;
+    var actualClass;
+
+    if (req.body.toLowerCase() === 'cratchit') {
+        actualClass = 'cratchit'
+    } else if (req.body.toLowerCase() === 'scrooge') {
+        actualClass = 'scrooge'
+    }
+
+    if (actualClass) {
+        updateClassification(idParam, actualClass, function handleUpdateResult (err, result) {
+            if (err) {
+                console.log('error:', err);
+                res.sendStatus(500);
+            } else {
+                res.json(result);
+            }
+        })
+    } else {
+        res.sendStatus(400);
+    }
 });
 
 //app.post('/api/yule-logs', textParser, function handlePostYuleLogs (req, res) {
