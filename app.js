@@ -147,14 +147,14 @@ function classifyText(text, finalCallback) {
             quote = quote + ', ' + now.year() + ')';
             nlcResponse.quote = quote;
 
-            console.log(JSON.stringify(nlcResponse, null, 2));
+            //console.log(JSON.stringify(nlcResponse, null, 2));
 
             callback(null, nlcResponse);
         },
         function storeResponse(festiveResponse, callback){
             var id = '';
             db.insert(festiveResponse, id, function(err, doc) {
-                console.log(JSON.stringify(doc, null, 2));
+                //console.log(JSON.stringify(doc, null, 2));
                 callback(err, festiveResponse, doc);
             });
         },
@@ -165,6 +165,7 @@ function classifyText(text, finalCallback) {
             callback(null, festiveResponse);
         }
     ], function (err, result) {
+        console.log(JSON.stringify(result, null, 2));
         finalCallback(err, result);
     });
 }

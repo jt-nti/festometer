@@ -19,33 +19,55 @@
   </head>
   <body ng-app="app">
     <div class="container" ng-controller="FestiveController">
-      <h1>Welcome to the fest-o-meter!</h1>
+      <div class="row">
+        <h1>Welcome to the fest-o-meter!</h1>
 
-      <p class="lead">Find out whether the fest-o-meter thinks you love Christmas as much as Bob Cratchit,
-        or whether you'll be sharing humbugs with Ebenezer Scrooge.</p>
-      
-      <form role="form" ng-submit="detectScrooge()">
-        <div class = "input-group">
+        <p class="lead">Find out whether the fest-o-meter thinks you love Christmas as much as Bob Cratchit,
+          or whether you'll be sharing humbugs with Ebenezer Scrooge.</p>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-10">
+          <form role="form" ng-submit="detectScrooge()">
+            <fieldset ng-disabled="isClassifying">
+              <div class = "input-group">
           <span class="input-group-addon" ng-style="treeStyle">
             <span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span>
           </span>
-          <input type="text" class="form-control" ng-model="festiveText" placeholder="I love mince pies!">
+                <input type="text" class="form-control" ng-model="festiveText" placeholder="I love mince pies!">
           <span class = "input-group-btn">
-            <button class="btn btn-default" type="submit" id="submit">Am I Scrooge?</button>
+            <button class="btn btn-primary" type="submit" id="submit">Am I Scrooge?</button>
           </span>
+              </div>
+            </fieldset>
+          </form>
+
+          <div class="list-group">
+            <div ng-repeat="yuleLog in yuleLogs" class="list-group-item clearfix">
+              <div>
+                <p class="list-group-item-text bh-result-quote">{{yuleLog.quote}}</p>
+                <p ng-show="yuleLog.id" class="small">&nbsp;</p>
+              </div>
+
+              <div ng-show="yuleLog.id" class="btn-group btn-group-sm pull-right" role="group">
+                <a href="#" role="button" class="btn btn-default disabled">Were you expecting to be {{yuleLog.top_class | capitalise}}?</a>
+                <a ng-click="updateExpectedClass(yuleLog, true)" role="button" class="btn btn-success"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Yes, I am {{yuleLog.top_class | capitalise}}</a>
+                <a ng-click="updateExpectedClass(yuleLog, false)" role="button" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> No, I'm not {{yuleLog.top_class | capitalise}}</a>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
+      </div>
 
-      <ul class="list-group">
-        <li ng-repeat="yuleLog in yuleLogs" class="list-group-item">{{yuleLog}}</li>
-      </ul>
+      <div class="row">
 
-      <p>This is just an experiment to see how easy it is to train a Watson
-        <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>
-        to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme
-        festivity should help Watson improve!</p>
+        <p>This is just an experiment to see how easy it is to train a Watson
+          <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/nl-classifier.html">Natural Language Classifier</a>
+          to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme
+          festivity should help Watson improve!</p>
 
-      <p><small>Thanks to <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://cheerlights.com/">Cheerlights</a> for the decorative tree!</small></p>
+        <p><small>Contact <a href="http://ibm.co/jtonline">James Taylor</a> with any feedback. With thanks to <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://cheerlights.com/">Cheerlights</a> for making the fest-o-meter so festive!</small></p>
+      </div>
     </div>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
