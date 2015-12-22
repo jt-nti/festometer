@@ -75,7 +75,7 @@
 
         //$scope.yuleLogs = [ {"classifier_id":"A3DA1Dx15-nlc-358","url":"https://gateway.watsonplatform.net/natural-language-classifier/api/v1/classifiers/A3DA1Dx15-nlc-358","text":"Find out whether the fest-o-meter thinks you love Christmas as much as Bob Cratchit, or whether you'll be sharing humbugs with Ebenezer Scrooge. This is just an experiment to see how easy it is to train a Watson Natural Language Classifier to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme festivity should help Watson improve!","top_class":"scrooge","classes":[{"class_name":"scrooge","confidence":0.9956084868079902},{"class_name":"cratchit","confidence":0.004391513192009913}],"created_at":"2015-12-21T22:25:36+00:00","quote":"\"Find out whether the fest-o-meter thinks you love Christmas as much as Bob Cratchit, or whether you'll be sharing humbugs with Ebenezer Scrooge. This is just an experiment to see how easy it is to train a Watson Natural Language Classifier to detect all the Scrooges out there. The fest-o-meter still needs more training so any bah humbug examples or extreme festivity should help Watson improve!\" (Scrooge, 2015)","id":"a08d1fc50557a45353fcbb4ff80428bb"} ];
 
-        $scope.treeStyle = { color: '#008000' };
+        $scope.treeStyle = { color: '#777777' };
     }
 
     function CapitaliseFilter () {
